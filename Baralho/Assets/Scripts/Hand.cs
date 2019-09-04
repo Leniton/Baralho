@@ -12,6 +12,8 @@ public class Hand : MonoBehaviour
     [Space]
     public bool myTurn;
 
+    public int points = 0;
+
     void Start()
     {
 
