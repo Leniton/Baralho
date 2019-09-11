@@ -11,6 +11,10 @@ public class Board : MonoBehaviour
     [Space]
     [SerializeField] Hand Player1, Player2;
     Sprite backImage;
+    [Space]
+    [SerializeField] Button continuar;
+    [Space]
+    [SerializeField] Animator cortina;
 
     void Start()
     {
@@ -75,6 +79,22 @@ public class Board : MonoBehaviour
         for (int i = 0; i < s.Length; i++)
         {
             s[i].sprite = Cardlist.cardlist.list[l[i]];
+        }
+
+        //se tiver alguma carta da outra mão exposta
+
+        Image[] OM = OtherHand.GetComponentsInChildren<Image>();
+
+        for (int i = 0; i < OM.Length; i++)
+        {
+            if(OM[i].sprite != backImage)
+            {
+                OM[i].sprite = backImage;
+            }
+            if (!OM[i].gameObject.GetComponent<Button>().interactable)
+            {
+                OM[i].gameObject.GetComponent<Button>().interactable = true;
+            }
         }
     }
 
@@ -162,5 +182,25 @@ public class Board : MonoBehaviour
             }
             Player1.cards = oh;
         }
+        continuar.gameObject.SetActive(true);
+    }
+
+    public void DescerCortina()
+    {
+        if (!cortina.enabled)
+        {
+            cortina.enabled = true;
+        }
+        else
+        {
+            cortina.SetTrigger("T");
+        }
+    }
+
+    public void SwitchTurn()
+    {
+        Player1.myTurn = !Player1.myTurn;
+        Player2.myTurn = !Player2.myTurn;
+        flip();
     }
 }
