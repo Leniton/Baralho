@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class Board : MonoBehaviour
 {
@@ -10,6 +11,8 @@ public class Board : MonoBehaviour
     [SerializeField] GameObject TurnHand, OtherHand;
     [Space]
     [SerializeField] Hand Player1, Player2;
+    [SerializeField] TextMeshProUGUI seusPontos;
+    [SerializeField] TextMeshProUGUI outroPontos;
     Sprite backImage;
     [Space]
     [SerializeField] Button continuar;
@@ -70,10 +73,12 @@ public class Board : MonoBehaviour
         if (Player1.myTurn)
         {
             l = Player1.cards;
+            seusPontos.text = "Sua pontuação: " + Player1.points;
         }
         else
         {
             l = Player2.cards;
+            seusPontos.text = "Sua pontuação: " + Player2.points;
         }
 
         for (int i = 0; i < s.Length; i++)
@@ -148,6 +153,7 @@ public class Board : MonoBehaviour
                 }
                 oh.RemoveAt(index);
                 oh.Add(Draw(oh));
+                seusPontos.text = "Sua pontuação: " + Player1.points;
             }
             else
             {
@@ -175,6 +181,7 @@ public class Board : MonoBehaviour
                 }
                 oh.RemoveAt(index);
                 oh.Add(Draw(oh));
+                seusPontos.text = "Sua pontuação: " + Player2.points;
             }
             else
             {
