@@ -7,6 +7,7 @@ using TMPro;
 public class Board : MonoBehaviour
 {
     [SerializeField] int CardLimit;
+    [SerializeField] Vector3[] places;
     [Space]
     [SerializeField] GameObject TurnHand, OtherHand;
     [Space]
@@ -22,6 +23,13 @@ public class Board : MonoBehaviour
     void Start()
     {
         backImage = OtherHand.transform.GetComponentInChildren<Image>().sprite;
+        Transform[] a;
+        a = OtherHand.GetComponentsInChildren<Transform>();
+        places = new Vector3[a.Length - 1];
+        for (int i = 0; i < places.Length; i++)
+        {
+            places[i] = a[i + 1].position;
+        }
 
         Player1.GetCard(0);
         for (int i = 1; i < CardLimit; i++)
