@@ -347,10 +347,10 @@ TextureImporter:
       name: playingCardBacks_12
       rect:
         serializedVersion: 2
-        x: 0
-        y: 74
-        width: 140
-        height: 190
+        x: 7
+        y: 81
+        width: 126
+        height: 176
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}

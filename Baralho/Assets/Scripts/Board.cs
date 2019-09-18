@@ -6,6 +6,8 @@ using TMPro;
 
 public class Board : MonoBehaviour
 {
+    string EndText;
+    [SerializeField] GameObject endScreen;
     [SerializeField] int CardLimit;
     [SerializeField] Vector3[] places;
     [Space]
@@ -19,6 +21,12 @@ public class Board : MonoBehaviour
     [SerializeField] Button continuar;
     [Space]
     [SerializeField] Animator cortina;
+    [Space]
+    [Space]
+    [SerializeField] GameObject ChangeHand;
+    [SerializeField] GameObject selectPrefab;
+    [SerializeField] GameObject selected;
+    [SerializeField] List<int> modHand;
 
     void Start()
     {
@@ -56,6 +64,20 @@ public class Board : MonoBehaviour
         }
 
         flip();
+
+        for (int i = 0; i < Player1.cards.Count; i++)
+        {
+            ChangeHand.transform.GetChild(i).GetComponent<Image>().sprite = Cardlist.cardlist.list[Player1.cards[i]];
+        }
+        modHand = Player1.cards;
+        if (Player2.myTurn)
+        {
+            for (int i = 0; i < Player2.cards.Count; i++)
+            {
+                ChangeHand.transform.GetChild(i).GetComponent<Image>().sprite = Cardlist.cardlist.list[Player2.cards[i]];
+            }
+            modHand = Player2.cards;
+        }
     }
 
     int Draw(List<int> b)
@@ -65,6 +87,7 @@ public class Board : MonoBehaviour
         {
             n = Random.Range(1, Cardlist.cardlist.list.Length);
         } while (b.Contains(n));
+        print("draw: " + n);
         return n;
     }
 
@@ -100,6 +123,7 @@ public class Board : MonoBehaviour
 
         for (int i = 0; i < OM.Length; i++)
         {
+            OM[i].GetComponent<Animator>().enabled = false;
             if(OM[i].sprite != backImage)
             {
                 OM[i].sprite = backImage;
@@ -132,8 +156,8 @@ public class Board : MonoBehaviour
             {
                 carta = OtherHand.transform.GetChild(i).gameObject;
                 index = i;
-                break;
             }
+            OtherHand.transform.GetChild(i).GetComponent<Button>().interactable = false;
         }
         if(carta != null)
         {
@@ -155,6 +179,8 @@ public class Board : MonoBehaviour
                     if (Player1.points >= 10)
                     {
                         print("Vitoria!!!!");
+                        EndText = "Você venceu!!!";
+                        StartCoroutine("TheEnd");
                     }
                     Player1.cards.RemoveAt( Player1.cards.IndexOf(oh[index]) );
                     Player1.cards.Add(Draw(Player1.cards));
@@ -162,10 +188,19 @@ public class Board : MonoBehaviour
                 oh.RemoveAt(index);
                 oh.Add(Draw(oh));
                 seusPontos.text = "Sua pontuação: " + Player1.points;
+                //sincronizar com o modificador
+
+                for (int i = 0; i < oh.Count; i++)
+                {
+                    ChangeHand.transform.GetChild(i).GetComponent<Image>().sprite = Cardlist.cardlist.list[Player1.cards[i]];
+                }
+                modHand = Player1.cards;
             }
             else
             {
                 print("derrota");
+                EndText = "Você Perdeu...";
+                StartCoroutine("TheEnd");
             }
             Player2.cards = oh;
         }
@@ -183,6 +218,8 @@ public class Board : MonoBehaviour
                     if(Player2.points >= 10)
                     {
                         print("Vitoria!!!!");
+                        EndText = "Você venceu!!!";
+                        StartCoroutine("TheEnd");
                     }
                     Player2.cards.RemoveAt( Player2.cards.IndexOf(oh[index]) );
                     Player2.cards.Add(Draw(Player2.cards));
@@ -190,13 +227,23 @@ public class Board : MonoBehaviour
                 oh.RemoveAt(index);
                 oh.Add(Draw(oh));
                 seusPontos.text = "Sua pontuação: " + Player2.points;
+                //sincronizar com o modificador
+
+                for (int i = 0; i < oh.Count; i++)
+                {
+                    ChangeHand.transform.GetChild(i).GetComponent<Image>().sprite = Cardlist.cardlist.list[Player2.cards[i]];
+                }
+                modHand = Player2.cards;
             }
             else
             {
                 print("derrota");
+                EndText = "Você Perdeu...";
+                StartCoroutine("TheEnd");
             }
             Player1.cards = oh;
         }
+
         continuar.gameObject.SetActive(true);
     }
 
@@ -217,5 +264,63 @@ public class Board : MonoBehaviour
         Player1.myTurn = !Player1.myTurn;
         Player2.myTurn = !Player2.myTurn;
         flip();
+    }
+
+    public void MoveCards(GameObject s)
+    {
+        if (selected != null)
+        {
+            selectPrefab.SetActive(false);
+            Vector3 Pholder = selected.transform.position;
+            selected.transform.position = s.transform.position;
+            s.transform.position = Pholder;
+
+            int fst, sec;
+            fst = selected.transform.GetSiblingIndex();
+            sec = s.transform.GetSiblingIndex();
+            selected.transform.SetSiblingIndex(sec);
+            s.transform.SetSiblingIndex(fst);
+
+            int v,Sv;
+            v = modHand[fst];
+            Sv = modHand[sec];
+            modHand.Remove(v);
+            modHand.Insert(sec, v);
+            modHand.Remove(Sv);
+            modHand.Insert(fst, Sv);
+
+            selected = null;
+        }
+        else
+        {
+            selected = s;
+            selectPrefab.SetActive(true);
+            selectPrefab.transform.position = s.transform.position;
+        }
+    }
+
+    public void FimMudar()
+    {
+        if (Player1.myTurn)
+        {
+            Player1.cards = modHand;
+        }
+        else
+        {
+            Player2.cards = modHand;
+        }
+    }
+
+    IEnumerator TheEnd()
+    {
+        yield return new WaitForSeconds(2);
+        endScreen.GetComponentInChildren<TextMeshProUGUI>().text = EndText;
+        endScreen.SetActive(true);
+    }
+
+    public void restart()
+    {
+        UnityEngine.SceneManagement.SceneManager.LoadScene(0);
+        
     }
 }
