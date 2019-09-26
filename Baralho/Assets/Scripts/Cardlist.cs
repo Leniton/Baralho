@@ -6,6 +6,7 @@ public class Cardlist : MonoBehaviour
 {
     public static Cardlist cardlist;
     public Sprite[] list = new Sprite[10];
+    public Sprite[] marks;
 
     void Awake()
     {

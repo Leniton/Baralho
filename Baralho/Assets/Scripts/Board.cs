@@ -7,6 +7,7 @@ using TMPro;
 public class Board : MonoBehaviour
 {
     string EndText;
+    public int PontosPVitoria;
     [SerializeField] GameObject endScreen;
     [SerializeField] int CardLimit;
     [SerializeField] Vector3[] places;
@@ -27,6 +28,10 @@ public class Board : MonoBehaviour
     [SerializeField] GameObject selectPrefab;
     [SerializeField] GameObject selected;
     [SerializeField] List<int> modHand;
+    [Space]
+    [SerializeField] GameObject SMark;
+    [SerializeField] GameObject MarkP;
+    [SerializeField] List<int> MarkHand;
 
     void Start()
     {
@@ -64,12 +69,14 @@ public class Board : MonoBehaviour
         }
 
         flip();
-
-        for (int i = 0; i < Player1.cards.Count; i++)
+        if (Player1.myTurn)
         {
-            ChangeHand.transform.GetChild(i).GetComponent<Image>().sprite = Cardlist.cardlist.list[Player1.cards[i]];
+            for (int i = 0; i < Player1.cards.Count; i++)
+            {
+                ChangeHand.transform.GetChild(i).GetComponent<Image>().sprite = Cardlist.cardlist.list[Player1.cards[i]];
+            }
+            modHand = Player1.cards;
         }
-        modHand = Player1.cards;
         if (Player2.myTurn)
         {
             for (int i = 0; i < Player2.cards.Count; i++)
@@ -77,6 +84,11 @@ public class Board : MonoBehaviour
                 ChangeHand.transform.GetChild(i).GetComponent<Image>().sprite = Cardlist.cardlist.list[Player2.cards[i]];
             }
             modHand = Player2.cards;
+        }
+
+        for (int i = 0; i < CardLimit; i++)
+        {
+            MarkHand.Add(0);
         }
     }
 
@@ -119,7 +131,7 @@ public class Board : MonoBehaviour
 
         //se tiver alguma carta da outra mão exposta
 
-        Image[] OM = OtherHand.GetComponentsInChildren<Image>();
+        Image[] OM = OtherHand.GetComponentsInChildren<Image>(false);
 
         for (int i = 0; i < OM.Length; i++)
         {
@@ -176,7 +188,7 @@ public class Board : MonoBehaviour
                     {
                         Player1.points++;
                     }
-                    if (Player1.points >= 10)
+                    if (Player1.points >= PontosPVitoria)
                     {
                         print("Vitoria!!!!");
                         EndText = "Você venceu!!!";
@@ -215,7 +227,7 @@ public class Board : MonoBehaviour
                     {
                         Player2.points++;
                     }
-                    if(Player2.points >= 10)
+                    if(Player2.points >= PontosPVitoria)
                     {
                         print("Vitoria!!!!");
                         EndText = "Você venceu!!!";
@@ -244,6 +256,11 @@ public class Board : MonoBehaviour
             Player1.cards = oh;
         }
 
+        for (int i = 0; i < MarkHand.Count; i++)
+        {
+            MarkHand[i] = 0;
+        }
+
         continuar.gameObject.SetActive(true);
     }
 
@@ -264,10 +281,28 @@ public class Board : MonoBehaviour
         Player1.myTurn = !Player1.myTurn;
         Player2.myTurn = !Player2.myTurn;
         flip();
+        MarkCards();
     }
 
     public void MoveCards(GameObject s)
     {
+        if(SMark != null)
+        {
+            int marca = SMark.transform.GetSiblingIndex();
+            if(marca > 0)
+            {
+                s.transform.GetChild(0).gameObject.SetActive(true);
+                s.transform.GetChild(0).GetComponent<Image>().sprite = Cardlist.cardlist.marks[marca];
+            }
+            else
+            {
+                s.transform.GetChild(0).gameObject.SetActive(false);
+            }
+            MarkHand[s.transform.GetSiblingIndex()] = marca;
+            MarkP.SetActive(false);
+            SMark = null;
+            return;
+        }
         if (selected != null)
         {
             selectPrefab.SetActive(false);
@@ -289,6 +324,21 @@ public class Board : MonoBehaviour
             modHand.Remove(Sv);
             modHand.Insert(fst, Sv);
 
+            //igualar as marcas
+            int Mv, Msv;
+            Mv = MarkHand[fst];
+            Msv = MarkHand[sec];
+
+            int FV = Mv;
+
+            MarkHand[fst] = Msv;
+            MarkHand[sec] = FV;
+
+            /*MarkHand.Remove(Mv);
+            MarkHand.Insert(sec, Mv);
+            MarkHand.Remove(Msv);
+            MarkHand.Insert(fst, Msv);*/
+
             selected = null;
         }
         else
@@ -296,6 +346,38 @@ public class Board : MonoBehaviour
             selected = s;
             selectPrefab.SetActive(true);
             selectPrefab.transform.position = s.transform.position;
+        }
+    }
+
+    public void SelectMark(GameObject m)
+    {
+        //desativar as marcas antes de usar o flip!!!!!!
+
+        if(SMark == null)
+        {
+            MarkP.SetActive(true);
+        }else if(SMark == m)
+        {
+            MarkP.SetActive(false);
+            SMark = null;
+            return;
+        }
+        SMark = m;
+        MarkP.transform.position = SMark.transform.position;
+    }
+
+    public void MarkCards()
+    {
+        for (int i = 0; i < OtherHand.transform.childCount; i++)
+        {
+            int n = MarkHand[i];
+            Sprite s = Cardlist.cardlist.marks[n];
+
+            OtherHand.transform.GetChild(i).GetChild(0).GetComponent<Image>().sprite = s;
+            if(n > 0)
+            {
+                OtherHand.transform.GetChild(i).GetChild(0).gameObject.SetActive(true);
+            }
         }
     }
 
@@ -308,6 +390,11 @@ public class Board : MonoBehaviour
         else
         {
             Player2.cards = modHand;
+        }
+        for (int i = 0; i < MarkHand.Count; i++)
+        {
+            OtherHand.transform.GetChild(i).GetChild(0).gameObject.SetActive(false);
+            ChangeHand.transform.GetChild(i).GetChild(0).gameObject.SetActive(false);
         }
     }
 
