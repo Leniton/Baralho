@@ -35,6 +35,9 @@ public class Board : MonoBehaviour
 
     void Start()
     {
+
+        PontosPVitoria = Config.C.GetVitoria();
+
         backImage = OtherHand.transform.GetComponentInChildren<Image>().sprite;
         Transform[] a;
         a = OtherHand.GetComponentsInChildren<Transform>();
@@ -407,13 +410,13 @@ public class Board : MonoBehaviour
 
     public void restart()
     {
-        UnityEngine.SceneManagement.SceneManager.LoadScene(1);
+        SceneM.manager.LoadGame();
         
     }
 
     public void Menu()
     {
-        UnityEngine.SceneManagement.SceneManager.LoadScene(0);
+        SceneM.manager.LoadMenu();
 
     }
 }

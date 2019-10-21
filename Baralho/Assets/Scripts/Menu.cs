@@ -51,4 +51,9 @@ public class Menu : MonoBehaviour
         regras[RAtual].SetActive(false);
         RAtual--;
     }
+
+    public void MudarPonto(int n)
+    {
+        Config.C.SetVitoria(n + 1);
+    }
 }
