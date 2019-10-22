@@ -38,7 +38,7 @@ public class Board : MonoBehaviour
 
         PontosPVitoria = Config.C.GetVitoria();
 
-        backImage = OtherHand.transform.GetComponentInChildren<Image>().sprite;
+        backImage = Config.C.Selected();
         Transform[] a;
         a = OtherHand.GetComponentsInChildren<Transform>();
         places = new Vector3[a.Length - 1];
@@ -179,6 +179,7 @@ public class Board : MonoBehaviour
             carta.GetComponent<Image>().sprite = Cardlist.cardlist.list[oh[index]];
         }
 
+        continuar.gameObject.SetActive(true);
         //devolve qualquer modificação
         if (Player1.myTurn)
         {
@@ -263,8 +264,6 @@ public class Board : MonoBehaviour
         {
             MarkHand[i] = 0;
         }
-
-        continuar.gameObject.SetActive(true);
     }
 
     public void DescerCortina()
@@ -403,6 +402,7 @@ public class Board : MonoBehaviour
 
     IEnumerator TheEnd()
     {
+        continuar.gameObject.SetActive(false);
         yield return new WaitForSeconds(2);
         endScreen.GetComponentInChildren<TextMeshProUGUI>().text = EndText;
         endScreen.SetActive(true);

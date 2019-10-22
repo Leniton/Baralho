@@ -43,4 +43,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5be5661cd382f2b448afd7ebea3a9a51, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  "PontosVit\xF3ria": 5
+  copy: []
+  cor: 1
+  tipo: 3
+  red:
+  - {fileID: 21300000, guid: c5a9b9d551258cf4393ee3dc6589b198, type: 3}
+  - {fileID: 21300000, guid: 21a4028cefcd5b344a00868ced4e08dd, type: 3}
+  - {fileID: 21300000, guid: feed8a6551c6dfa438cc7349a4eabed4, type: 3}
+  - {fileID: 21300000, guid: cf88812148995f5408fcf2d4c2a509c8, type: 3}
+  blue:
+  - {fileID: 21300000, guid: af5280cc3982dd4499cf4368f62fa4b1, type: 3}
+  - {fileID: 21300000, guid: a002be71e3f69984ab9e21b0a1aedcc6, type: 3}
+  - {fileID: 21300000, guid: 847b68d3461b8874384cdb5d1743c0ac, type: 3}
+  - {fileID: 21300000, guid: bb8d7ec2571ab6641b3c243d9a48809f, type: 3}
+  verde:
+  - {fileID: 21300000, guid: 3dfecd2bc55ec6447a64e4dd87280da5, type: 3}
+  - {fileID: 21300000, guid: d5e3ca808e582994b8bac4ff66a9d196, type: 3}
+  - {fileID: 21300000, guid: c6df6c7bcef8a0e4fb79c140d373ee99, type: 3}
+  - {fileID: 21300000, guid: eda4acb2af19234499ed45848955db66, type: 3}
