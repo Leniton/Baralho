@@ -18,7 +18,7 @@ public class SceneM : MonoBehaviour
             }
             else
             {
-                Destroy(this);
+                Destroy(gameObject);
             }
         }
     }

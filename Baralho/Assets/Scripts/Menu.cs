@@ -3,10 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 public class Menu : MonoBehaviour
 {
+    localData dados;
 
+    [SerializeField] TMP_Dropdown pontosVitoria;
+    [SerializeField] TMP_Dropdown corBack;
+    [Space]
     int RAtual = 0;
     [SerializeField] GameObject[] regras;
 
@@ -29,14 +34,27 @@ public class Menu : MonoBehaviour
         }
         regras[RAtual].SetActive(true);
 
+        dados = LocalSave.Load();
+        if (dados != null)
+        {
+            Config.C.SetVitoria(dados.PPV);
+
+            cor = dados.Cor;
+            tipo = dados.Tipo;
+        }
+
         changeCardColor(cor);
         Picked.transform.position = BackCards.transform.GetChild(tipo).position;
         CurrentColor = cor;
+        Config.C.Select(BackCards.transform.GetChild(tipo).GetComponent<Image>().sprite);
+
+        corBack.value = CurrentColor;
+        pontosVitoria.value = Config.C.GetVitoria() - 1;
     }
 
-    public void loadScene(int n)
+    public void Play()
     {
-        SceneManager.LoadScene(n);
+        SceneM.manager.LoadGame();
     }
 
 
@@ -71,6 +89,9 @@ public class Menu : MonoBehaviour
     public void MudarPonto(int n)
     {
         Config.C.SetVitoria(n + 1);
+
+        dados = new localData(Config.C.GetVitoria(), cor, tipo);
+        LocalSave.Save(dados);
     }
 
     public void changeCardColor(int n)
@@ -101,5 +122,8 @@ public class Menu : MonoBehaviour
 
         Config.C.pickArray(cor);
         Config.C.Select(Config.C.copy[tipo]);
+
+        dados = new localData(Config.C.GetVitoria(), cor, tipo);
+        LocalSave.Save(dados);
     }
 }
